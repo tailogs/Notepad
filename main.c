@@ -4,11 +4,12 @@
 #include <shellapi.h> // Для системного трея
 #include "resource.h"
 
-#define VERSION "1.0.0"
+#define VERSION "1.0.1"
 
 HINSTANCE hInst;
 HWND hEdit, hStatusBar;
 NOTIFYICONDATA nid;
+HFONT hFont;
 
 // Прототипы функций
 void CreateMenus(HWND hwnd);
@@ -33,7 +34,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
                 hInst,
                 NULL
             );
-            SendMessage(hEdit, WM_SETFONT, (WPARAM)GetStockObject(DEFAULT_GUI_FONT), TRUE);
+            SendMessage(hEdit, WM_SETFONT, (WPARAM)hFont, TRUE);
             break;
 
         case WM_SIZE:
@@ -197,7 +198,25 @@ void RemoveTrayIcon(HWND hwnd) {
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
     HWND myConsole = GetConsoleWindow(); //window handle
     ShowWindow(myConsole, 0); //handle window
-    
+
+    // Создание шрифта
+    hFont = CreateFont(
+        20,                        // Высота шрифта
+        0,                         // Ширина шрифта (0 означает автоматическая ширина)
+        0,                         // Угол наклона шрифта
+        0,                         // Угол наклона шрифта
+        FW_NORMAL,                 // Толщина шрифта
+        FALSE,                     // Курсив
+        FALSE,                     // Подчеркивание
+        FALSE,                     // Перечеркивание
+        DEFAULT_CHARSET,           // Набор символов
+        OUT_DEFAULT_PRECIS,        // Точность вывода
+        CLIP_DEFAULT_PRECIS,       // Точность обрезки
+        DEFAULT_QUALITY,           // Качество вывода
+        DEFAULT_PITCH | FF_SWISS,  // Стиль шрифта и семья шрифтов
+        "Arial"                    // Название шрифта
+    );
+
     WNDCLASSEX wcex;
     HWND hwnd;
     MSG msg;
@@ -277,7 +296,7 @@ void CreateStatusBar(HWND hwnd) {
 // Функция для отображения диалога "О программе"
 void ShowAboutDialog(HWND hwnd) {
     char message[256];
-    sprintf(message, "Notepad %s\nA simple notepad.\nDeveloper - Taillogs.", VERSION);
+    sprintf(message, "Notepad %s\nA simple notepad.\nDeveloper - Tailogs.", VERSION);
     MessageBox(hwnd, message, "About Simple Notepad", MB_OK | MB_ICONINFORMATION);
 }
 
